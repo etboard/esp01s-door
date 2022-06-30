@@ -1,34 +1,55 @@
-/*
+/******************************************************************************************
+ * FileName     : esp01s-door.ino
+ * Description  : Control AC door through unlock sigal from DragonView Video Phone 
+ *                Convert DC door unlock signal to AC door lock by relay
+ *                드래곤뷰 비디오폰은 DC 12V(직류) door lock을 제어함
+ *                기존 집에 있에는 door lock은 AC 220V(교류)로 제어됨
+ * Author       : Cheolsu Son(손철수) 
+ * Hardware     : ESP01S + Dragonsview 960P Tuya Video Intercom 10 Inch 
+ * Reference    : Tools -> Board -> Generic ESP8266 Module
+ *                https://www.hardcopyworld.com/?p=2528
+ *                https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/ 
+ *                https://www.aliexpress.com/item/1005003745935633.html?spm=a2g0o.order_list.0.0.72da1802CHeytB
+ * Created Date : 2022.04.19
+ * Modified     : 2022.06.30 : SCS : 장마(습도)로 AC door이 힘이 없네...
+******************************************************************************************/
+#include <Arduino.h>
 
-https://www.hardcopyworld.com/?p=2528
-https://randomnerdtutorials.com/how-to-install-esp8266-board-arduino-ide/
-
-  2022.04.19 : SCS
-  board      : Tools -> Board -> Generic ESP8266 Module
-*/
-
+//------------------------------------------------------------------------------------------
+// esp01s pin definition
+//------------------------------------------------------------------------------------------
 int relay_pin = 0;
 int led_pin = 2;
-
 int btn_pin = 3;
-int BUTTONState = 0;
 
-int ledState = LOW;             
-unsigned long previousMillis = 0;
-const long interval = 100;             // blink
+//------------------------------------------------------------------------------------------
+// relay operation time
+//------------------------------------------------------------------------------------------
+// 너무 길면 AC 자석이 욺, 
+// 너무 짧으면 AC 자석이 힘이 없음
+// 2022.06.30 : scs : 100 -> 150
+const long unlock_time = 150;          
+                                      
+//------------------------------------------------------------------------------------------
+// debounce delay for button or signal
+//------------------------------------------------------------------------------------------
+// the debounce time; increase if the output flickers
+// 이상한 노이즈(low)값 필터링; unlock(low) 신호를 보내지 않았는 데, 
+// 가끔 노이즈 발생하여 door가 unlock됨
+const long debounceDelay = 1000;                                                 
 
-const long unlock_time = 150;          // relay operation interval, 너무 길면 AC 자석이 욺, 너무 짧으면 AC 자석이 힘이 없음
-                                       // 2022.06.30 : scs : 100 -> 150
-                                       
-int buttonState = HIGH;                // the current reading from the input pin
-int lastButtonState = HIGH;            // the previous reading from the input pin
+//------------------------------------------------------------------------------------------
+// function declaration
+//------------------------------------------------------------------------------------------                                       
+void do_Process();
+void blink();
+void unlock_Door();
+void lock_Door();
 
-unsigned long lastDebounceTime = 0;    // the last time the output pin was toggled
-unsigned long debounceDelay = 1000;    // the debounce time; increase if the output flickers
-                                       // 이상한 노이즈(low)값 방지.
-
-
-void setup() {  
+//------------------------------------------------------------------------------------------
+void setup() 
+//------------------------------------------------------------------------------------------
+{  
   pinMode(relay_pin, OUTPUT);  
   digitalWrite(relay_pin,HIGH);
   delay(10); 
@@ -37,15 +58,23 @@ void setup() {
   pinMode(btn_pin, INPUT_PULLUP);   
 }
 
-// the loop function runs over and over again forever
-void loop() {
-  op3();
+//------------------------------------------------------------------------------------------
+void loop() 
+//------------------------------------------------------------------------------------------
+{
+  do_Process();
 
   blink();
 }
 
-void op3() {
-  
+//------------------------------------------------------------------------------------------
+void do_Process() 
+//------------------------------------------------------------------------------------------
+{
+  static int buttonState = HIGH;                // the current reading from the input pin
+  static int lastButtonState = HIGH;            // the previous reading from the input pin
+  static unsigned long lastDebounceTime = 0;    // the last time the output pin was toggled
+
   int reading = digitalRead(btn_pin);
   if (reading != lastButtonState) {
     lastDebounceTime = millis();
@@ -55,31 +84,44 @@ void op3() {
       buttonState = reading;
 
       if(buttonState==LOW){    
-        unlock_Key();
+        unlock_Door();
         lastDebounceTime = millis();
       }
       else {
-        lock_key();
+        lock_Door();
       }
   }
   
   lastButtonState = reading;  
 }
 
-void unlock_Key() {
+//------------------------------------------------------------------------------------------
+void unlock_Door() 
+//------------------------------------------------------------------------------------------
+{
   digitalWrite(led_pin,LOW);
   digitalWrite(relay_pin,LOW);
-  delay(100);    
+  delay(unlock_time);    
   digitalWrite(led_pin,HIGH);
   digitalWrite(relay_pin,HIGH);
   delay(3000);
 }
 
-void lock_key() {
+//------------------------------------------------------------------------------------------
+void lock_Door() 
+//------------------------------------------------------------------------------------------
+{
   digitalWrite(relay_pin,HIGH);
 }
 
-void blink()  {
+//------------------------------------------------------------------------------------------
+void blink()  
+//------------------------------------------------------------------------------------------
+{
+  static int ledState = LOW; 
+  static unsigned long previousMillis = 0;
+  const long interval = 100;             
+  
   unsigned long currentMillis = millis();
 
   if (currentMillis - previousMillis >= interval) {
@@ -92,3 +134,9 @@ void blink()  {
     digitalWrite(led_pin, ledState);
   }
 }
+
+//==========================================================================================
+//                                                    
+// (주)한국공학기술연구원 http://et.ketri.re.kr       
+//                                                    
+//==========================================================================================
