@@ -28,7 +28,8 @@ int btn_pin = 3;
 // 너무 길면 AC 자석이 욺, 
 // 너무 짧으면 AC 자석이 힘이 없음
 // 2022.06.30 : scs : 100 -> 150
-const long unlock_time = 150;          
+// 2022.07.11 : scs : 150 -> 200
+const long unlock_time = 200;          
                                       
 //------------------------------------------------------------------------------------------
 // debounce delay for button or signal
