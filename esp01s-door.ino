@@ -13,6 +13,7 @@
  *                https://www.youtube.com/watch?v=DWz9LJQ2XHU : AD/DC 창이, AC 찡~~, 약 1초.
  * Created Date : 2022.04.19
  * Modified     : 2022.06.30 : SCS : 장마(습도)로 AC door이 힘이 없네...
+ * Modified     : 2022.11.17 : SCS : 겨울인가... AC door이 힘이 없네...
 ******************************************************************************************/
 #include <Arduino.h>
 
@@ -31,7 +32,8 @@ int btn_pin = 3;
 // 2022.06.30 : scs : 100 -> 150
 // 2022.07.11 : scs : 150 -> 200
 // 2022.09.12 : scs : 200 -> 400
-const long unlock_time = 400;          
+// 2022.09.12 : scs : 400 -> 800
+const long unlock_time = 800;          
                                       
 //------------------------------------------------------------------------------------------
 // debounce delay for button or signal
