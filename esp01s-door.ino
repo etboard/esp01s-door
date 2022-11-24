@@ -32,8 +32,9 @@ int btn_pin = 3;
 // 2022.06.30 : scs : 100 -> 150
 // 2022.07.11 : scs : 150 -> 200
 // 2022.09.12 : scs : 200 -> 400
-// 2022.09.12 : scs : 400 -> 500 ; 추후에는 200 + 100으로 분리해서 실행
-const long unlock_time = 500;          
+// 2022.11.12 : scs : 400 -> 500 ; 추후에는 200 + 100으로 분리해서 실행
+// 2022.11.24 : scs : 150
+const long unlock_time = 200;          
                                       
 //------------------------------------------------------------------------------------------
 // debounce delay for button or signal
@@ -111,6 +112,15 @@ void unlock_Door()
   delay(unlock_time);    
   digitalWrite(led_pin,HIGH);
   digitalWrite(relay_pin,HIGH);
+
+  delay(50);    
+  
+  digitalWrite(led_pin,LOW);
+  digitalWrite(relay_pin,LOW);
+  delay(unlock_time);    
+  digitalWrite(led_pin,HIGH);
+  digitalWrite(relay_pin,HIGH);
+  
   delay(3000);
 }
 
