@@ -1,5 +1,5 @@
 /******************************************************************************************
- * FileName     : esp01s-door.ino
+ * FileName     : esp01s-door-direct.ino
  * Description  : Control AC door through unlock sigal from DragonView Video Phone 
  *                Convert DC door unlock signal to AC door lock by relay
  *                드래곤뷰 비디오폰은 DC 12V(직류) door lock을 제어함
@@ -14,6 +14,7 @@
  * Created Date : 2022.04.19
  * Modified     : 2022.06.30 : SCS : 장마(습도)로 AC door이 힘이 없네...
  * Modified     : 2022.11.17 : SCS : 겨울인가... AC door이 힘이 없네...
+ * Modified     : 2025.08.06 : SCS : 파일 이름 변경
 ******************************************************************************************/
 #include <Arduino.h>
 
