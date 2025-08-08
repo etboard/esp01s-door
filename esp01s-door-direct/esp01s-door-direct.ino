@@ -57,10 +57,12 @@ void lock_Door();
 void setup() 
 //------------------------------------------------------------------------------------------
 { 
-  Serial.begin(115200);
-  Serial.println("\n\nstart\n"); 
   pinMode(relay_pin, OUTPUT);  
   digitalWrite(relay_pin,HIGH);
+  
+  Serial.begin(115200);
+  Serial.println("\n\nstart\n"); 
+
   delay(10); 
   
   pinMode(led_pin, OUTPUT);  
